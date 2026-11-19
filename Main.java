@@ -6,7 +6,9 @@ public class Main {
 
         Scanner scanner = new Scanner(System.in);
 
+        // =========================
         // PART 1 - REGISTRATION
+        // =========================
 
         System.out.println("=== CREATE ACCOUNT ===");
 
@@ -26,7 +28,8 @@ public class Main {
                 "Enter your South African cellphone number: "
         );
 
-        String cellPhoneNumber = scanner.nextLine();
+        String cellPhoneNumber =
+                scanner.nextLine();
 
         Login user = new Login(
                 firstName,
@@ -90,24 +93,30 @@ public class Main {
         if (!validRegistration) {
 
             System.out.println();
+
             System.out.println(
                     "Registration failed. Please restart and try again."
             );
 
             scanner.close();
+
             return;
         }
 
+        // =========================
         // PART 1 - LOGIN
+        // =========================
 
         System.out.println();
         System.out.println("=== LOGIN ===");
 
         System.out.print("Enter your username: ");
-        String loginUsername = scanner.nextLine();
+        String loginUsername =
+                scanner.nextLine();
 
         System.out.print("Enter your password: ");
-        String loginPassword = scanner.nextLine();
+        String loginPassword =
+                scanner.nextLine();
 
         user.setLoginDetails(
                 loginUsername,
@@ -120,17 +129,22 @@ public class Main {
                 user.returnLoginStatus()
         );
 
-
         if (!user.loginUser()) {
 
             scanner.close();
+
             return;
         }
 
-        // PART 2 - QUICKCHAT
+        // =========================
+        // PART 2 AND 3 - QUICKCHAT
+        // =========================
 
         System.out.println();
         System.out.println("Welcome to QuickChat.");
+
+        // Load any messages stored in JSON
+        Message.loadStoredMessagesFromJson();
 
         System.out.println();
 
@@ -139,7 +153,9 @@ public class Main {
         );
 
         int maximumMessages =
-                Integer.parseInt(scanner.nextLine());
+                Integer.parseInt(
+                        scanner.nextLine()
+                );
 
         int messagesEntered = 0;
 
@@ -148,12 +164,25 @@ public class Main {
         while (running) {
 
             System.out.println();
-            System.out.println("=== QUICKCHAT MENU ===");
-            System.out.println("1. Send Messages");
+            System.out.println(
+                    "=== QUICKCHAT MENU ==="
+            );
+
+            System.out.println(
+                    "1. Send Messages"
+            );
+
             System.out.println(
                     "2. Show recently sent messages"
             );
-            System.out.println("3. Quit");
+
+            System.out.println(
+                    "3. Quit"
+            );
+
+            System.out.println(
+                    "4. Stored Messages"
+            );
 
             System.out.print(
                     "Select an option: "
@@ -166,7 +195,8 @@ public class Main {
 
                 case "1":
 
-                    if (messagesEntered >= maximumMessages) {
+                    if (messagesEntered
+                            >= maximumMessages) {
 
                         System.out.println(
                                 "You have reached the number of messages "
@@ -195,8 +225,12 @@ public class Main {
                     String messageText =
                             scanner.nextLine();
 
+                    String sender =
+                            firstName + " " + lastName;
+
                     Message newMessage =
                             new Message(
+                                    sender,
                                     recipient,
                                     messageText
                             );
@@ -211,7 +245,8 @@ public class Main {
                             newMessage.checkMessageLength()
                     );
 
-                    if (!newMessage.checkRecipientCell()
+                    if (!newMessage
+                            .checkRecipientCell()
                             .equals(
                                     "Cell phone number successfully captured."
                             )) {
@@ -223,7 +258,8 @@ public class Main {
                         break;
                     }
 
-                    if (!newMessage.checkMessageLength()
+                    if (!newMessage
+                            .checkMessageLength()
                             .equals(
                                     "Message ready to send."
                             )) {
@@ -236,6 +272,7 @@ public class Main {
                     }
 
                     System.out.println();
+
                     System.out.println(
                             "What would you like to do?"
                     );
@@ -265,13 +302,10 @@ public class Main {
                             action
                     );
 
-                    String actionResult =
+                    String result =
                             newMessage.SentMessage();
 
-                    System.out.println(
-                            actionResult
-                    );
-
+                    System.out.println(result);
 
                     if (action == 2) {
 
@@ -321,11 +355,10 @@ public class Main {
 
                 case "2":
 
-                    // Assignment says this feature
-                    // is still under development
+                    System.out.println();
 
                     System.out.println(
-                            "Coming Soon."
+                            Message.displaySentMessages()
                     );
 
                     break;
@@ -333,6 +366,14 @@ public class Main {
                 case "3":
 
                     running = false;
+
+                    break;
+
+                case "4":
+
+                    showStoredMessageMenu(
+                            scanner
+                    );
 
                     break;
 
@@ -344,17 +385,11 @@ public class Main {
             }
         }
 
-        Message totalChecker =
-                new Message(
-                        "+27718693002",
-                        "Total checker"
-                );
-
         System.out.println();
 
         System.out.println(
                 "Total messages sent: "
-                + totalChecker.returnTotalMessages()
+                + Message.getTotalMessagesSent()
         );
 
         System.out.println(
@@ -362,5 +397,163 @@ public class Main {
         );
 
         scanner.close();
+    }
+
+    // =========================
+    // PART 3 
+    // =========================
+
+    public static void showStoredMessageMenu(
+            Scanner scanner) {
+
+        boolean storedMenu = true;
+
+        while (storedMenu) {
+
+            System.out.println();
+
+            System.out.println(
+                    "=== STORED MESSAGES ==="
+            );
+
+            System.out.println(
+                    "1. Display sender and recipient of stored messages"
+            );
+
+            System.out.println(
+                    "2. Display longest stored message"
+            );
+
+            System.out.println(
+                    "3. Search for message ID"
+            );
+
+            System.out.println(
+                    "4. Search messages for recipient"
+            );
+
+            System.out.println(
+                    "5. Delete message using message hash"
+            );
+
+            System.out.println(
+                    "6. Display stored message report"
+            );
+
+            System.out.println(
+                    "7. Back to main menu"
+            );
+
+            System.out.print(
+                    "Select an option: "
+            );
+
+            String choice =
+                    scanner.nextLine();
+
+            switch (choice) {
+
+                case "1":
+
+                    System.out.println();
+
+                    System.out.println(
+                            Message
+                                    .displayStoredSendersAndRecipients()
+                    );
+
+                    break;
+
+                case "2":
+
+                    System.out.println();
+
+                    System.out.println(
+                            Message
+                                    .getLongestStoredMessage()
+                    );
+
+                    break;
+
+                case "3":
+
+                    System.out.print(
+                            "Enter message ID: "
+                    );
+
+                    String messageID =
+                            scanner.nextLine();
+
+                    System.out.println();
+
+                    System.out.println(
+                            Message.searchMessageByID(
+                                    messageID
+                            )
+                    );
+
+                    break;
+
+                case "4":
+
+                    System.out.print(
+                            "Enter recipient cellphone number: "
+                    );
+
+                    String recipient =
+                            scanner.nextLine();
+
+                    System.out.println();
+
+                    System.out.println(
+                            Message.searchMessagesByRecipient(
+                                    recipient
+                            )
+                    );
+
+                    break;
+
+                case "5":
+
+                    System.out.print(
+                            "Enter message hash: "
+                    );
+
+                    String messageHash =
+                            scanner.nextLine();
+
+                    System.out.println();
+
+                    System.out.println(
+                            Message.deleteMessageByHash(
+                                    messageHash
+                            )
+                    );
+
+                    break;
+
+                case "6":
+
+                    System.out.println();
+
+                    System.out.println(
+                            Message.displayStoredReport()
+                    );
+
+                    break;
+
+                case "7":
+
+                    storedMenu = false;
+
+                    break;
+
+                default:
+
+                    System.out.println(
+                            "Invalid option. Please try again."
+                    );
+            }
+        }
     }
 }
